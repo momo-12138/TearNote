@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TearNote</title>
+    <!-- 引入自定义样式与 Vditor 编辑器依赖 -->
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="vditor/dist/index.css" />
+    <script src="vditor/dist/index.min.js"></script>
+</head>
+<body>
+    <!-- ================= 顶部控制栏 ================= -->
+    <div class="header">
+        <!-- 左侧：Mac风格红黄绿红绿绿灯控制按钮 -->
+        <div class="mac-controls">
+            <button id="close-btn" class="mac-btn close" title="关闭"></button>
+            <button id="min-btn" class="mac-btn minimize" title="最小化"></button>
+            <button id="max-btn" class="mac-btn maximize" title="最大化"></button>
+        </div>
+        
+        <!-- 中间：用于拖拽窗口的区域 -->
+        <div data-tauri-drag-region class="drag-bar"></div>
+        
+        <!-- 右侧：功能工具栏 -->
+        <div class="right-tools">
+            <button id="theme-btn" class="tool-btn" title="切换主题">
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="icon-system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            </button>
+            <button id="top-btn" class="tool-btn" title="窗口置顶">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="17" x2="12" y2="22"></line><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 11.2V6a3 3 0 0 0-6 0v5.2a2 2 0 0 1-1.11 1.35l-1.78.9A2 2 0 0 0 5 15.24Z"></path></svg>
+            </button>
+            <button id="pin-btn" class="tool-btn" title="撕下为独立磁贴">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </button>
+            <button id="settings-btn" class="tool-btn" title="偏好设置">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg>
+            </button>
+            <button id="destroy-btn" class="tool-btn destroy-btn" title="彻底销毁此磁贴" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= 编辑器主体 ================= -->
+    <div id="vditor"></div>
+
+    <!-- ================= 搜索与命令弹窗 (Cmd+P) ================= -->
+    <div id="search-modal" class="search-modal">
+        <div class="search-container split-layout">
+            <div class="search-left">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search-input" placeholder="输入内容检索记忆 / > 执行命令" autocomplete="off" spellcheck="false">
+                </div>
+                <div id="search-results" class="search-results"></div>
+            </div>
+            <div class="search-right" id="search-preview-container">
+                <div class="preview-empty">上下键选择，Enter 独立打开</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 偏好设置弹窗 ================= -->
+    <div id="settings-modal" class="search-modal">
+        <div class="settings-container">
+            <div class="settings-header">
+                <h3>偏好设置</h3>
+                <div class="mac-controls">
+                    <button id="close-settings" class="mac-btn close" title="关闭设置"></button>
+                </div>
+            </div>
+            <div class="settings-body-split">
+                <!-- 设置左侧导航 -->
+                <div class="settings-sidebar">
+                    <div class="nav-item active" data-target="cfg-sec-sticker">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        磁贴行为
+                    </div>
+                    <div class="nav-item" data-target="cfg-sec-search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        搜索与索引
+                    </div>
+                    <div class="nav-item" data-target="cfg-sec-editor">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                        界面与显示
+                    </div>
+                    <div class="nav-item" data-target="cfg-sec-data">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                        数据管理
+                    </div>
+                </div>
+                
+                <!-- 设置右侧内容区 -->
+                <div class="settings-content" id="settings-scroll-area">
+                    
+                    <!-- 模块：磁贴行为 -->
+                    <div id="cfg-sec-sticker" class="cfg-section">
+                        <h4>磁贴行为 (Sticker)</h4>
+                        <label class="cfg-item"><span>Pin 后自动清空主屏 (Inbox模式)</span> <input type="checkbox" id="cfg-pinClearsMain" class="mac-toggle"></label>
+                        <label class="cfg-item"><span>允许重复打开同一个磁贴</span> <input type="checkbox" id="cfg-allowDuplicates" class="mac-toggle"></label>
+                        <label class="cfg-item"><span>新磁贴弹出位置</span>
+                            <select id="cfg-stickerPosition" class="mac-select">
+                                <option value="offset">主窗口附近轻微偏移</option>
+                                <option value="center">屏幕居中</option>
+                            </select>
+                        </label>
+                    </div>
+                    
+                    <!-- 模块：搜索与索引 -->
+                    <div id="cfg-sec-search" class="cfg-section">
+                        <h4>搜索与索引 (Search)</h4>
+                        <label class="cfg-item"><span>启用模糊匹配 (Fuzzy)</span> <input type="checkbox" id="cfg-searchFuzzy" class="mac-toggle"></label>
+                        <label class="cfg-item"><span>打字时实时搜索</span> <input type="checkbox" id="cfg-searchRealtime" class="mac-toggle"></label>
+                        <label class="cfg-item"><span>搜索结果上限</span>
+                            <select id="cfg-searchLimit" class="mac-select">
+                                <option value="30">30 条 (推荐)</option>
+                                <option value="50">50 条</option>
+                                <option value="100">100 条</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <!-- 模块：界面与显示 -->
+                    <div id="cfg-sec-editor" class="cfg-section">
+                        <h4>界面与显示 (UI)</h4>
+                        
+                        <label class="cfg-item"><span>外观主题</span>
+                            <select id="cfg-theme" class="mac-select">
+                                <option value="system">跟随系统自动切换</option>
+                                <option value="light">始终浅色 (Light)</option>
+                                <option value="dark">始终深色 (Dark)</option>
+                            </select>
+                        </label>
+
+                        <label class="cfg-item"><span>字体大小 (编辑器)</span>
+                            <select id="cfg-fontSize" class="mac-select">
+                                <option value="13px">13px (偏小)</option>
+                                <option value="15px">15px (标准)</option>
+                                <option value="17px">17px (偏大)</option>
+                                <option value="19px">19px (特大)</option>
+                            </select>
+                        </label>
+                        
+                        <label class="cfg-item"><span>阅读密度 (行间距)</span>
+                            <select id="cfg-lineHeight" class="mac-select">
+                                <option value="1.4">紧凑 (1.4)</option>
+                                <option value="1.6">舒适 (1.6 - 默认)</option>
+                                <option value="1.8">宽松 (1.8)</option>
+                                <option value="2.0">极宽 (2.0)</option>
+                            </select>
+                        </label>
+
+                        <!-- 窗口关闭行为控制 -->
+                        <label class="cfg-item"><span>关闭主窗口时最小化到系统托盘</span> <input type="checkbox" id="cfg-closeToTray" class="mac-toggle"></label>
+                        <label class="cfg-item"><span>每次关闭/隐藏主窗口时清空内容</span> <input type="checkbox" id="cfg-clearMainOnHide" class="mac-toggle"></label>
+
+                        <label class="cfg-item"><span>时间显示格式</span>
+                            <select id="cfg-timeFormat" class="mac-select">
+                                <option value="relative">相对时间 (如: 3分钟前)</option>
+                                <option value="absolute">绝对时间 (如: 2024年5月18日 08:30)</option>
+                            </select>
+                        </label>
+                        
+                        <label class="cfg-item"><span>自动保存间隔</span>
+                            <select id="cfg-autoSaveInterval" class="mac-select">
+                                <option value="0">实时保存 (无延迟)</option>
+                                <option value="1000">1 秒</option>
+                                <option value="3000">3 秒</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <!-- 模块：数据管理 -->
+                    <div id="cfg-sec-data" class="cfg-section" style="padding-bottom: 40px;">
+                        <h4>数据管理 (Data)</h4>
+                        <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+                            <button class="cfg-btn" id="cfg-btn-import">导入记忆备份</button>
+                            <button class="cfg-btn" id="cfg-btn-export">导出全部记忆</button>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="cfg-btn danger" id="cfg-btn-rebuild">强制重建网络索引</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入主逻辑入口 -->
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
